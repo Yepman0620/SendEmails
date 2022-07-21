@@ -8,7 +8,7 @@ port = 587  # For starttls
 smtp_server = "smtps.hkbu.edu.hk"
 emailSender = "hmacisinfo@hkbu.edu.hk"
 emailSenderName = "hmacisinfo@hkbu.edu.hk"
-password = '**'
+password = '9zE@~4Sp'
 emailTitle = "Yiwen的测试标题"                                      # 邮件主题（标题）
 #emailContentFilename = "EmailContent.txt"                   # 邮件内容（文本形式）
 emailContentFilename = "EmailContent.html"                 # 邮件内容（网页形式）
@@ -46,14 +46,26 @@ message.attach(att1)                                             # 对应收件�
 
 context = ssl.create_default_context()
 successCount = 0
-with smtplib.SMTP(smtp_server, port) as server:
-    server.ehlo()  # Can be omitted
-    server.starttls(context=context)
-    server.ehlo()  # Can be omitted
-    server.login(emailSender, password)
-    for each in emailReceivers:
-        server.sendmail(emailSender, [each], message.as_string())
-        print("成功发送邮件至："+each)
-        successCount += 1
-    server.quit()
-print("共有"+str(successCount)+"封邮件发送成功，"+str(len(emailReceivers)-successCount)+"封邮件发送失败")    
+# fail的邮件清单
+failListFile = open(failListFilename, 'w', encoding="utf8")
+
+try:
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()  # Can be omitted
+        server.starttls(context=context)
+        server.ehlo()  # Can be omitted
+        server.login(emailSender, password)
+        for each in emailReceivers:
+            try:
+                server.sendmail(emailSender, [each], message.as_string())
+                print("成功发送邮件至："+each)
+                successCount += 1
+            except Exception:
+                print("尝试发送至"+each+"失败")
+                failListFile.write(each+"\n")
+        server.quit()
+except Exception: 
+    print("与邮箱服务器连接失败")
+
+print("共有"+str(successCount)+"封邮件发送成功，"+str(len(emailReceivers)-successCount)+"封邮件发送失败") 
+failListFile.close()
