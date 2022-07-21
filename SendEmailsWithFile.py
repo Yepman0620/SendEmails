@@ -1,7 +1,8 @@
-emailSender = 'csywwang@comp.hkbu.edu.hk'                                     # 发件人邮箱账号
-emailSenderPassword ='**********'                                 # 发件人邮箱密码
-emailSenderName = "Yiwen"                                    # 发件人昵称
-emailSMTPAddress = "mh2.comp.hkbu.edu.hk"                                   # 发件人邮箱SMTP地址（一般为smtp.邮箱后缀，如smtp.126.com）
+emailSender = 'hmacisinfo@hkbu.edu.hk'                                     # 发件人邮箱账号
+emailSenderPassword = '***'                                 # 发件人邮箱密码
+emailSenderName = "hmacisinfo@hkbu.edu.hk"                                    # 发件人昵称
+#emailSMTPAddress = "smtps.hkbu.edu.hk"
+emailSMTPAddress = "mh2.comp.hkbu.edu.hk"
 emailSMTPPort = 465                                          # 发件人邮箱SMTP端口（非加密端口一般为25，加密端口一般为465）
 
 emailTitle = "Yiwen的测试标题"                                      # 邮件主题（标题）
@@ -12,7 +13,7 @@ emailReceiversListFilename = "EmailReceiversList.csv"       # 收件人邮箱账
 failListFilename = "FailList.csv"                           # 发送失败的邮箱列表
 
 
-import smtplib
+import smtplib, ssl
 from email.mime.text import MIMEText
 from email.utils import formataddr
 from email.mime.multipart import MIMEMultipart
@@ -36,9 +37,10 @@ emailContent = open(emailContentFilename, 'r', encoding="utf8").read()
 # 连接服务器并发送邮件
 failListFile = open(failListFilename, 'w', encoding="utf8")
 try:
+    
+    
     server = smtplib.SMTP_SSL(emailSMTPAddress, emailSMTPPort)              # 发件人邮箱中的SMTP服务器
     server.login(emailSender, emailSenderPassword)                          # 发件人邮箱账号、邮箱密码
-    
     successCount = 0
     for each in emailReceivers:                                             # 逐个邮箱发送，达到群发单显的效果
         try:
@@ -60,7 +62,6 @@ try:
         except Exception:
             print("尝试发送至"+each+"失败")
             failListFile.write(each+"\n")
-        
     server.quit()                                                           # 关闭与邮箱服务器的连接
     print("共有"+str(successCount)+"封邮件发送成功，"+str(len(emailReceivers)-successCount)+"封邮件发送失败")
 except Exception: 
