@@ -7,9 +7,9 @@ from email.header import Header
 port = 587  # For starttls
 smtp_server = "smtps.hkbu.edu.hk"
 emailSender = "hmacisinfo@hkbu.edu.hk"
-emailSenderName = "hmacisinfo@hkbu.edu.hk"
-password = '9zE@~4Sp'
-emailTitle = "Yiwen的测试标题"                                      # 邮件主题（标题）
+emailSenderName = "香港浸會大學"
+password = '***'
+emailTitle = "誠邀出席：「人、機器、藝術、創意——國際研討會」"                                      # 邮件主题（标题）
 #emailContentFilename = "EmailContent.txt"                   # 邮件内容（文本形式）
 emailContentFilename = "EmailContent.html"                 # 邮件内容（网页形式）
 
@@ -38,10 +38,12 @@ message['To'] =  each
 #邮件正文内容
 message.attach(MIMEText(emailContent, emailContentType, 'utf-8'))
 # 构造附件1，传送当前目录下的 test.txt 文件
-att1 = MIMEText(open('Example.png', 'rb').read(), 'base64', 'utf-8')
+att1 = MIMEText(open('研讨会议程.pdf', 'rb').read(), 'base64', 'utf-8')
 att1["Content-Type"] = 'application/octet-stream'
-# 这里的filename可以任意写，写什么名字，邮件中显示什么名字
-att1["Content-Disposition"] = 'attachment; filename="Example.png"'
+# 这里的filename中文这样写
+att1.add_header("Content-Disposition", "attachment", filename=("gbk", "", "研讨会议程.pdf"))
+# 英文这样写
+#att1["Content-Disposition"] = 'attachment; filename="English.pdf"'
 message.attach(att1)                                             # 对应收件人邮箱账号message = """
 
 context = ssl.create_default_context()
